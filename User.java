@@ -21,7 +21,7 @@ public class User {
 		username = userName;
 		isMainUser = isMain;
 		
-		String desktopPath = new DirectoryManager().getDesktopPath();
+		String desktopPath = DirectoryManager.getDesktopPath();
 		filePath = desktopPath + "/TwitterProject/Users/" + username;
 		
 		loadProfile();
@@ -41,10 +41,7 @@ public class User {
 	/*
 	 * @RETURNS The Following ArrayList object
 	 */
-	public ArrayList<User> getFollowing() {
-		
-		return following;
-	}
+	public ArrayList<User> getFollowing() { return following; }
 	
 	
 	/*
@@ -53,9 +50,9 @@ public class User {
 	 */
 	public void followUser(String userName) {
 		
-		DirectoryManager drMng = new DirectoryManager();
+
 		
-		switch (drMng.checkUserExists(userName)) {
+		switch (AuthManager.checkUserExists(userName)) {
 		
 		case 0: //Success
 			
@@ -95,10 +92,7 @@ public class User {
 	/*
 	 * @RETURNS The Tweet ArrayList object
 	 */
-	public ArrayList<Tweet> getTweets() {
-		
-		return tweets;
-	}
+	public ArrayList<Tweet> getTweets() { return tweets; }
 	
 	
 	/*
@@ -142,13 +136,12 @@ public class User {
 		FileReader fr = new FileReader(filePath + "/following.txt");
 		
 		BufferedReader br = new BufferedReader(fr);
-		DirectoryManager drMng = new DirectoryManager();
 		
 		String line = br.readLine();
 		
 		while (line != null) {
 			
-			if (drMng.checkUserExists(line) == 0) {
+			if (AuthManager.checkUserExists(line) == 0) {
 				
 				User newUser = new User(line, false);
 				
@@ -174,7 +167,6 @@ public class User {
 		FileReader fr = new FileReader(filePath + "/tweets.txt");
 		
 		BufferedReader br = new BufferedReader(fr);
-		DirectoryManager drMng = new DirectoryManager();
 		
 		String line = br.readLine();
 		
@@ -199,15 +191,53 @@ public class User {
 	
 	
 	
-	public static Tweet[] getTwitterFeed() {
+	/*
+	 * @RETURNS The Twitter Feed based on every followed User's Tweets sorted in date order from most recent - oldest
+	 * 
+	 * Work in Progress
+	 */
+	
+	public Tweet[] getTwitterFeed() {
 		
-		Tweet[] feed = new Tweet[10];
+		int totalTweets = 0;
+		for (User user : following) {
+			
+			totalTweets += user.getTweets().size();
+			if (totalTweets == 10) {
+				totalTweets = 10;
+				break;
+			}
+		}
 		
-		for (User user: following) {
+		Tweet[] feed = new Tweet[totalTweets];
+		
+		for (User user : following) {
+			
 			ArrayList<Tweet> followingTweets = user.getTweets();
 			
 			for (int i = 0; i<followingTweets.size(); i++) {
-				feed[i] = followingTweets.get(i);
+				
+				boolean shouldContinue = false;
+				
+				for (int j = 0; j<feed.length; j++) {
+					
+					if (shouldContinue) {
+						shouldContinue = false;
+						break;
+					}
+					
+					if (feed[j] == null) feed[j] = followingTweets.get(i);
+					
+					else if (feed[j].getDate().getTime() < followingTweets.get(i).getDate().getTime()) {
+						feed[j] = followingTweets.get(i);
+						shouldContinue = true;
+						continue;
+					} 
+					
+					else continue;
+					
+				}
+				
 			}
 		}
 		
@@ -216,48 +246,21 @@ public class User {
 	
 	
 	
-	/*
-	 * @RETURNS The Twitter Feed based on every followed User's Tweets sorted in date order from most recent - oldest
-	 * 
-	 * Work in Progress
-	 */
 	
-//	public Tweet[] getTwitterFeed() {
+//	public static Tweet[] getTwitterFeed() {
+//		
 //		Tweet[] feed = new Tweet[10];
 //		
-//		for (User user : following) {
-//			
+//		for (User user: following) {
 //			ArrayList<Tweet> followingTweets = user.getTweets();
 //			
 //			for (int i = 0; i<followingTweets.size(); i++) {
-//				
-//				boolean shouldContinue = false;
-//				
-//				for (int j = 0; j<feed.length; j++) {
-//					
-//					if (shouldContinue) {
-//						shouldContinue = false;
-//						break;
-//					}
-//					
-//					if (feed[j] == null) feed[j] = followingTweets.get(i);
-//					
-//					else if (feed[j].getDate().getTime() < followingTweets.get(i).getDate().getTime()) {
-//						feed[j] = followingTweets.get(i);
-//						shouldContinue = true;
-//						continue;
-//					} 
-//					
-//					else continue;
-//					
-//				}
-//				
+//				feed[i] = followingTweets.get(i);
 //			}
 //		}
 //		
 //		return feed;
 //	}
-	
 
 
 

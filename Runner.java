@@ -9,6 +9,7 @@ public class Runner {
 	public static void main(String[] args) {		
 		
 		DirectoryManager drMng = new DirectoryManager();
+		AuthManager authMng = new AuthManager();
 		
 		System.out.println("Does Directory Exist?: " + drMng.initMainDirectory() + "\n\n");
 		
@@ -25,7 +26,7 @@ public class Runner {
 		 password = scan.next();
 		 
 		
-		if (drMng.attemptLogin(username, password) == true) break;
+		if (authMng.attemptLogin(username, password) == true) break;
 		
 		
 		}
