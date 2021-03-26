@@ -1,4 +1,4 @@
-package twitter;
+package application;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

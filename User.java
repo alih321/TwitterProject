@@ -1,4 +1,4 @@
-package twitter;
+package application;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class User {
 	
 	/* Friend's List
 	 * Note: Not mutual, it is directional */
-	private static ArrayList<User> following = new ArrayList<User>();
+	private ArrayList<User> following = new ArrayList<User>();
 	private ArrayList<Tweet> tweets = new ArrayList<Tweet>();
 	
 	
@@ -48,9 +48,13 @@ public class User {
 	 * Follows a specific user putting their tweets in your feed
 	 * @PARAM userName: The username of the user you'd like to follow
 	 */
-	public void followUser(String userName) {
+	public boolean followUser(String userName) {
 		
 
+		
+		for (User followed : following) {
+			if (followed.username == userName) return false;
+		}
 		
 		switch (AuthManager.checkUserExists(userName)) {
 		
@@ -76,11 +80,12 @@ public class User {
 			
 			System.out.println("User was followed!");
 
-			break;
+			return true;
 			
 			
 		default:
 			System.out.println("User could not be followed - does not exist.");
+			return false;
 		}
 					
 

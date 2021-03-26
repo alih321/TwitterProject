@@ -1,4 +1,4 @@
-package twitter;
+package application;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,6 +40,10 @@ public class Tweet {
 	
 	public Date getDate() {
 		return datePosted;
+	}
+	
+	public String getID() { 
+		return username + datePosted;
 	}
 	
 	
