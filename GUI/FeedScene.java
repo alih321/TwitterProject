@@ -1,8 +1,6 @@
 package application.GUI;
 
-import application.Main;
-import application.Tweet;
-import application.User;
+import application.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -12,26 +10,48 @@ import javafx.scene.control.*;
 
 public class FeedScene {
 	
-	public static Scene getFeedScene(Main main, User user) {
+	public static Scene getFeedScene(Main main, User user, FeedFilters filter) {
 		
 		ScrollPane scroll = new ScrollPane();
 				
 		VBox layout = new VBox(20);
-		
+								
 		layout.setAlignment(Pos.TOP_CENTER);
 		
-		layout.getChildren().add(MainMenuBar.getMainMenuBar(main, user));
+		layout.getChildren().add(MainMenuBar.getMainMenuBarWithFilters(main, user));
 		
 		
 		Tweet[] tweets = user.getTwitterFeed();
 		
+		
+		TrendingBar trendingBar = new TrendingBar();
+		trendingBar.setTrendingTag(FeedAnalyzer.getTrendingTagsFromFeed(tweets));
+		HBox trending = trendingBar.getTrendingBar(user);
+		
+
+		layout.getChildren().add(trending);
+
 		for (Tweet tweet : tweets) {
 			
 			TweetView tweetView = new TweetView(tweet);
 			Line line = new Line();
 			line.setStroke(Color.BLACK);
 			
-			layout.getChildren().addAll(tweetView, line);
+			switch (filter) {
+			
+			case NONE:
+				layout.getChildren().addAll(tweetView, line);
+				break;
+				
+			case TRENDING_ONLY:
+				if (tweet.getIsTrending()) 
+					layout.getChildren().addAll(tweetView, line);
+				break;
+				
+			default:
+				layout.getChildren().addAll(tweetView, line);
+			
+			}
 			
 		}
 		

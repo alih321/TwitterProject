@@ -18,10 +18,10 @@ public class AuthManager {
 	public static boolean attemptLogin(String username, String password) {
 		
 		switch (checkUserCredentials(username, password)) {
-		case 0:
+		case SUCCESS:
 			System.out.println("User exists and password is correct!");
 			return true;
-		case 1:
+		case INCORRECT_PASSWORD:
 			System.out.println("User exists but password was incorrect!");
 			return false;
 		default:
@@ -33,7 +33,7 @@ public class AuthManager {
 	
 	
 	
-	public static int checkUserExists(String username) {
+	public static boolean checkUserExists(String username) {
 		
 		File file = new File(PATH + "/" + "authorization.txt");
 		try {
@@ -47,7 +47,7 @@ public class AuthManager {
 				
 				if (line.contentEquals(username)) {
 	
-					return 0; //SUCCESS
+					return true; //SUCCESS
 				}
 				
 				
@@ -60,13 +60,14 @@ public class AuthManager {
 		} 
 		
 		
-		return 1; //User does not exist
+		return false; //User does not exist
 		
 	}
 	
 
+
 	
-	private static int checkUserCredentials(String username, String password) {
+	private static UserAuthResults checkUserCredentials(String username, String password) {
 		
 		File file = new File(PATH + "/" + "authorization.txt");
 		try {
@@ -82,12 +83,14 @@ public class AuthManager {
 	
 					String pw = br.readLine();
 					if (pw.equals(password)) { 
-						return 0; //SUCCESS
+						br.close();
+						return UserAuthResults.SUCCESS;
 					}
 					
 	
 					else {
-						return 1; //Password is wrong
+						br.close();
+						return UserAuthResults.INCORRECT_PASSWORD;
 					}
 				}
 				
@@ -99,8 +102,8 @@ public class AuthManager {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
-		return 2; //User does not exist
+				
+		return UserAuthResults.USER_DOES_NOT_EXIST;
 		
 	}
 	

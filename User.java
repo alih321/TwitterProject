@@ -2,8 +2,9 @@ package application;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
-public class User {
+public class User implements Comparable<User> {
 	
 	public String username;
 	
@@ -56,21 +57,22 @@ public class User {
 			if (followed.username == userName) return false;
 		}
 		
-		switch (AuthManager.checkUserExists(userName)) {
-		
-		case 0: //Success
-			
+		if (AuthManager.checkUserExists(userName)) {
 			try {
 			FileWriter fw = new FileWriter(filePath + "/following.txt", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			
 			PrintWriter out = new PrintWriter(bw);
 			
+			//Check if user is in following
+			
 			out.append(userName);
 			out.println();
 			
 			out.close();
 			bw.close();
+			
+			//Overwrite file with new folowing
 			
 			following.add(new User(userName, false));	
 			
@@ -82,8 +84,8 @@ public class User {
 
 			return true;
 			
-			
-		default:
+		}
+			else {
 			System.out.println("User could not be followed - does not exist.");
 			return false;
 		}
@@ -92,12 +94,21 @@ public class User {
 	}
 	
 	
+	/*
+	 * @TODO: Remove the user's name from the "Following.txt" file
+	 */
+	public void unfollowUser(User user) {
+		following.remove(user);
+		System.out.println("User unfollowed!");
+	}
+	
 	
 	
 	/*
 	 * @RETURNS The Tweet ArrayList object
 	 */
 	public ArrayList<Tweet> getTweets() { return tweets; }
+	
 	
 	
 	/*
@@ -122,13 +133,49 @@ public class User {
 		out.close();
 		bw.close();
 		
+		System.out.println(newTweet.getHashtags().toString());
+		
 		if (isMainUser) tweets.add(newTweet);
 		
 		} catch (Exception e) {
 			System.out.println("ERROR! Could not publish tweet. error - " + e.getLocalizedMessage());
 		}
 		
+		
+		
 	}
+	
+	
+	/*
+	 * @NOTE: Needs serious refactoring, O(n^3)
+	 */
+	public Tweet[] getTwitterFeed() {
+		
+		ArrayList<Tweet> tweets = new ArrayList<>();
+		
+		for (User user : following) {
+			
+			tweets.addAll(user.getTweets());
+			
+		}
+		
+		Tweet[] tweetArray = new Tweet[tweets.size()];
+		
+		
+		for (int i = 0; i<tweets.size(); i++) {
+			tweetArray[i] = tweets.get(i);
+		}
+		
+		String trendingTag = FeedAnalyzer.getTrendingTagsFromFeed(tweetArray);
+		
+		for (int i = 0; i<tweetArray.length; i++)
+			if (tweetArray[i].content.contains(trendingTag))
+				tweetArray[i].setTrending(true);
+
+		
+		return tweetArray;
+	}
+	
 	
 	
 	/*
@@ -146,7 +193,7 @@ public class User {
 		
 		while (line != null) {
 			
-			if (AuthManager.checkUserExists(line) == 0) {
+			if (AuthManager.checkUserExists(line)) {
 				
 				User newUser = new User(line, false);
 				
@@ -193,83 +240,12 @@ public class User {
 		}
 		
 	}
-	
-	
-	
-	/*
-	 * @RETURNS The Twitter Feed based on every followed User's Tweets sorted in date order from most recent - oldest
-	 * 
-	 * Work in Progress
-	 */
-	
-	public Tweet[] getTwitterFeed() {
-		
-		int totalTweets = 0;
-		for (User user : following) {
-			
-			totalTweets += user.getTweets().size();
-			if (totalTweets == 10) {
-				totalTweets = 10;
-				break;
-			}
-		}
-		
-		Tweet[] feed = new Tweet[totalTweets];
-		
-		for (User user : following) {
-			
-			ArrayList<Tweet> followingTweets = user.getTweets();
-			
-			for (int i = 0; i<followingTweets.size(); i++) {
-				
-				boolean shouldContinue = false;
-				
-				for (int j = 0; j<feed.length; j++) {
-					
-					if (shouldContinue) {
-						shouldContinue = false;
-						break;
-					}
-					
-					if (feed[j] == null) feed[j] = followingTweets.get(i);
-					
-					else if (feed[j].getDate().getTime() < followingTweets.get(i).getDate().getTime()) {
-						feed[j] = followingTweets.get(i);
-						shouldContinue = true;
-						continue;
-					} 
-					
-					else continue;
-					
-				}
-				
-			}
-		}
-		
-		return feed;
+
+
+	@Override
+	public int compareTo(User o) {
+		if (o.username == this.username) return 1;
+		else return 0;
 	}
-	
-	
-	
-	
-//	public static Tweet[] getTwitterFeed() {
-//		
-//		Tweet[] feed = new Tweet[10];
-//		
-//		for (User user: following) {
-//			ArrayList<Tweet> followingTweets = user.getTweets();
-//			
-//			for (int i = 0; i<followingTweets.size(); i++) {
-//				feed[i] = followingTweets.get(i);
-//			}
-//		}
-//		
-//		return feed;
-//	}
-
-
-
-	
-	
 
 }

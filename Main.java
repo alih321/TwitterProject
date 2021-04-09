@@ -27,15 +27,18 @@ public class Main extends Application {
 	
 	
 	public static void main(String[] args) {
-		launch(args);
 		
 		DirectoryManager.initMainDirectory();
+
+		launch(args);
+		
 	}
 	
 	
 	public void setScene(Scene scene) {
 		primStage.setScene(scene);
 	}
+	
 
 
 

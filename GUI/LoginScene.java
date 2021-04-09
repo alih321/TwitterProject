@@ -31,7 +31,7 @@ public class LoginScene {
 			if (AuthManager.attemptLogin(usernameAttempt,passwordAttempt)) {
 				User user = new User(usernameAttempt, true);
 				AlertBox.display("Notice", "User successfully logged in!");
-				main.setScene(FeedScene.getFeedScene(main, user));
+				main.setScene(FeedScene.getFeedScene(main, user, FeedFilters.NONE));
 			} else {
 				AlertBox.display("Notice", "Could not find register user...");
 			}

@@ -20,7 +20,7 @@ public class MyProfileScene {
 				
 		VBox layout = new VBox(20);
 		
-		layout.setAlignment(Pos.BASELINE_CENTER);
+		layout.setAlignment(Pos.TOP_CENTER);
 		
 		layout.getChildren().add(MainMenuBar.getMainMenuBar(main, user));
 		
