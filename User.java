@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import application.GUI.AlertBox;
+
 public class User implements Comparable<User> {
 	
 	public String username;
@@ -51,33 +53,41 @@ public class User implements Comparable<User> {
 	 */
 	public boolean followUser(String userName) {
 		
-
-		
 		for (User followed : following) {
-			if (followed.username == userName) return false;
+			if (followed.username.equals(userName)) return false;
 		}
 		
 		if (AuthManager.checkUserExists(userName)) {
+			
+			for (User users: following) {
+				if (users.username == userName) {
+					System.out.println("User is already followed");
+					return false;
+				}
+			}
+			
 			try {
-			FileWriter fw = new FileWriter(filePath + "/following.txt", true);
-			BufferedWriter bw = new BufferedWriter(fw);
-			
-			PrintWriter out = new PrintWriter(bw);
-			
-			//Check if user is in following
-			
-			out.append(userName);
-			out.println();
-			
-			out.close();
-			bw.close();
-			
-			//Overwrite file with new folowing
-			
-			following.add(new User(userName, false));	
-			
+				File tweetFile = new File(filePath + "/following.txt");
+				
+				PrintWriter out = new PrintWriter(tweetFile);
+				
+				User toFollow = new User(userName, false);
+				following.add(toFollow);
+				
+				String newFollowingFileContent = "";
+				
+				for (User follow: following) {
+					newFollowingFileContent += follow.username + "\n";
+				}
+				
+				System.out.println(newFollowingFileContent);
+				
+				out.write(newFollowingFileContent);
+				out.flush();
+				out.close();
+				
 			} catch (Exception e) {
-				System.out.println("ERROR OCCURRED! Error : " + e.getLocalizedMessage());
+				System.out.println("A problem occurred: " + e.getMessage());
 			}
 			
 			System.out.println("User was followed!");
@@ -86,20 +96,41 @@ public class User implements Comparable<User> {
 			
 		}
 			else {
-			System.out.println("User could not be followed - does not exist.");
+			System.out.println("User could not be followed - does not exist or is already followed.");
 			return false;
 		}
 					
 
 	}
 	
-	
-	/*
-	 * @TODO: Remove the user's name from the "Following.txt" file
-	 */
+
 	public void unfollowUser(User user) {
-		following.remove(user);
-		System.out.println("User unfollowed!");
+
+		try {
+			File tweetFile = new File(filePath + "/following.txt");
+			
+			PrintWriter out = new PrintWriter(tweetFile);
+			
+			following.remove(user);
+			System.out.println("User unfollowed!");
+			
+			String newFollowingFileContent = "";
+			
+			for (User follow: following) {
+				newFollowingFileContent += follow.username + "\n";
+			}
+			
+			System.out.println(newFollowingFileContent);
+			
+			out.write(newFollowingFileContent);
+			out.flush();
+			out.close();
+			
+		} catch (Exception e) {
+			System.out.println("A problem occurred: " + e.getMessage());
+		}
+		
+		AlertBox.display("Notification", "User was unfollowed");
 	}
 	
 	
@@ -116,32 +147,49 @@ public class User implements Comparable<User> {
 	 * @PARAM content: The tweet's text content
 	 */
 	public void publishTweet(String content) {
+		
+		Tweet newTweet = new Tweet(this, content);
+		tweets.add(newTweet);
+		
+		updateTweets();
+		
+		
+		
+	}
+	
+	public void retweetTweet(Tweet t) {
+		
+		Tweet retweet = new Tweet(t);
+		retweet.setRetweet(this.username);
+		
+		tweets.add(retweet);
+		
+		updateTweets();
+		
+	}
+	
+	public void updateTweets() {
+		
 		try {
+			File tweetFile = new File(filePath + "/tweets.txt");
 			
-		FileWriter fw = new FileWriter(filePath + "/tweets.txt", true);
-		BufferedWriter bw = new BufferedWriter(fw);
-		
-		PrintWriter out = new PrintWriter(bw);
-		
-		Tweet newTweet = new Tweet(username, content);
-		
-		out.append(content);
-		out.println();
-		out.append(newTweet.getDateString());
-		out.println();
-		
-		out.close();
-		bw.close();
-		
-		System.out.println(newTweet.getHashtags().toString());
-		
-		if (isMainUser) tweets.add(newTweet);
-		
+			PrintWriter out = new PrintWriter(tweetFile);
+			
+			String newTweetFileContent = "";
+			
+			for (Tweet tweet: tweets) {
+				newTweetFileContent += tweet.toString();
+			}
+			
+			System.out.println(newTweetFileContent);
+			
+			out.write(newTweetFileContent);
+			out.flush();
+			out.close();
+			
 		} catch (Exception e) {
-			System.out.println("ERROR! Could not publish tweet. error - " + e.getLocalizedMessage());
+			System.out.println("A problem occurred: " + e.getMessage());
 		}
-		
-		
 		
 	}
 	
@@ -226,9 +274,25 @@ public class User implements Comparable<User> {
 			
 			String tweetDate = br.readLine();
 			
-			Tweet newTweet = new Tweet(username, line, tweetDate);
+			String accountLikes = br.readLine();
+			
+			String[] accountSep = accountLikes.split("\t");
+			ArrayList<String> allAccounts = new ArrayList<>();
+			for (String s : accountSep) allAccounts.add(s);
+			
+			String retweetedFrom = br.readLine();
+			
+			Tweet newTweet;
+			
+			if (retweetedFrom.equals("-"))
+				newTweet = new Tweet(this, line, tweetDate, allAccounts);
+			else
+				newTweet = new Tweet(this, line, tweetDate, allAccounts, retweetedFrom);
+				
 			
 			tweets.add(newTweet);
+			
+			System.out.println(newTweet);
 			
 			line = br.readLine();
 		}

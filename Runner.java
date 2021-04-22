@@ -83,7 +83,7 @@ public class Runner {
 				Tweet tweet = userTweets.get(i);
 				
 				System.out.println("\n----");
-				System.out.println("USER: " + tweet.username);
+				System.out.println("USER: " + tweet.user.username);
 				System.out.println("--");
 				System.out.println(tweet.content);
 				System.out.println("\n");
@@ -125,7 +125,7 @@ public class Runner {
 				if (tweet == null) break;
 				
 				System.out.println("\n----");
-				System.out.println("USER: " + tweet.username);
+				System.out.println("USER: " + tweet.user.username);
 				System.out.println("--");
 				System.out.println(tweet.content);
 				System.out.println("\n");

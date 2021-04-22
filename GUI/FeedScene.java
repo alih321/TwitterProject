@@ -33,7 +33,7 @@ public class FeedScene {
 
 		for (Tweet tweet : tweets) {
 			
-			TweetView tweetView = new TweetView(tweet);
+			TweetView tweetView = new TweetView(tweet, user);
 			Line line = new Line();
 			line.setStroke(Color.BLACK);
 			

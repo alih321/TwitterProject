@@ -28,7 +28,7 @@ public class TestFeedScene {
 		
 		sideBar.getChildren().addAll(sep, button1,button2,button3);
 		
-		regularView.getChildren().add(new TweetView(new Tweet("Test 1", "Hello")));
+		//regularView.getChildren().add(new TweetView(new Tweet("Test 1", "Hello")));
 		
 		sideBar.setStyle("-fx-background-color: lightblue");
 		
