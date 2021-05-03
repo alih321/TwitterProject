@@ -2,11 +2,11 @@ package application;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Collections;
 
 import application.GUI.AlertBox;
 
-public class User implements Comparable<User> {
+public class User {
 	
 	public String username;
 	
@@ -159,11 +159,15 @@ public class User implements Comparable<User> {
 	
 	public void retweetTweet(Tweet t) {
 		
-		Tweet retweet = new Tweet(t);
-		retweet.setRetweet(this.username);
+		if (t.user.username == this.username) 
+			return;
+		
+		
+		Tweet retweet = new Tweet(t, this);
+		retweet.setRetweet(t.user.username);
+		AlertBox.display("Success!", "You have retweeted this tweet.");
 		
 		tweets.add(retweet);
-		
 		updateTweets();
 		
 	}
@@ -194,9 +198,7 @@ public class User implements Comparable<User> {
 	}
 	
 	
-	/*
-	 * @NOTE: Needs serious refactoring, O(n^3)
-	 */
+
 	public Tweet[] getTwitterFeed() {
 		
 		ArrayList<Tweet> tweets = new ArrayList<>();
@@ -206,6 +208,8 @@ public class User implements Comparable<User> {
 			tweets.addAll(user.getTweets());
 			
 		}
+		
+		Collections.sort(tweets, new SortByDate());
 		
 		Tweet[] tweetArray = new Tweet[tweets.size()];
 		
@@ -305,11 +309,5 @@ public class User implements Comparable<User> {
 		
 	}
 
-
-	@Override
-	public int compareTo(User o) {
-		if (o.username == this.username) return 1;
-		else return 0;
-	}
 
 }

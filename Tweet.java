@@ -1,9 +1,12 @@
 package application;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import application.GUI.AlertBox;
 
 public class Tweet {
 
@@ -32,6 +35,9 @@ public class Tweet {
 		
 		this.accountLikes = accountLikes;
 		
+		if (this.accountLikes.contains(""))
+			this.accountLikes.remove("");
+		
 		try {
 		datePosted = format.parse(dateString);
 		} catch (Exception e) {
@@ -47,12 +53,12 @@ public class Tweet {
 		
 	}
 	
-	public Tweet(Tweet other) {
-		this.user = other.user;
+	public Tweet(Tweet other, User retweetedBy) {
+		this.user = retweetedBy;
 		this.content = other.content;
 		this.datePosted = new Date();
 		this.isTrending = other.isTrending;
-		this.accountLikes = other.accountLikes;
+		this.accountLikes = new ArrayList<>();
 	}
 	
 	
@@ -67,12 +73,19 @@ public class Tweet {
 	
 	public void addAccountLike(User u) {
 		
-		if (u.username == user.username) return;
+		if (u.username == user.username) {
+			AlertBox.display("Notice", "You cannot like your own tweet.");
+			return;
+		}
 		
-		if (!isUserLiked(u))
+		if (!isUserLiked(u)) {
 			accountLikes.add(u.username);
-		else
+			AlertBox.display("Success!", "You have liked this tweet.");
+		}
+		else {
 			accountLikes.remove(u.username);
+			AlertBox.display("Notice", "You have unliked this tweet.");
+		}
 		
 		user.updateTweets();
 		
@@ -80,7 +93,8 @@ public class Tweet {
 	
 	
 	public int getNumberOfLikes() {
-		return accountLikes.size()-1;
+		
+		return accountLikes.size();
 	}
 	
 	
@@ -139,7 +153,19 @@ public class Tweet {
 		return part1 + part2 + "\n" + retweetedFrom + "\n";
 	}
 
+
+
 	
 	
+	
+}
+
+
+class SortByDate implements Comparator<Tweet> {
+
+	@Override
+	public int compare(Tweet o1, Tweet o2) {
+		return -1*(o1.getDate().compareTo(o2.getDate()));
+	}
 	
 }

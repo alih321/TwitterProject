@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class MyProfileScene {
-	
+		
 	public static Scene getMyProfileScene(Main main, User user) {
 		
 		ScrollPane scroll = new ScrollPane();
@@ -24,12 +24,14 @@ public class MyProfileScene {
 		
 		layout.getChildren().add(MainMenuBar.getMainMenuBar(main, user));
 		
+		Scene ProfileScene = new Scene(scroll, 500, 500);
+
 		
 		ArrayList<Tweet> tweets = user.getTweets();
 		
 		for (Tweet tweet : tweets) {
 			
-			TweetView tweetView = new TweetView(tweet, user);
+			TweetView tweetView = new TweetView(tweet, user, main, false);
 			Line line = new Line();
 			line.setStroke(Color.BLACK);
 			
@@ -40,11 +42,11 @@ public class MyProfileScene {
 		scroll.setContent(layout);
 		scroll.setFitToWidth(true);
 		
-		Scene ProfileScene = new Scene(scroll, 500, 500);
 		
 		
 		return ProfileScene;
 		
 	}
+
 
 }

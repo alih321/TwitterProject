@@ -21,15 +21,16 @@ public class ComposeTweetScene {
 		Label title = new Label("Compose Tweet");
 		title.setFont(Font.font("Verdana", 20));
 		TextArea tweetContent = new TextArea();
+		tweetContent.setMaxWidth(350);
 		Button postTweet = new Button("Post Tweet");
 		
 		postTweet.setOnAction(e -> {
-			if (tweetContent.getText().length() > 10) {
+			if (tweetContent.getText().length() > 10 || tweetContent.getText().length() > 400) {
 				user.publishTweet(tweetContent.getText());
 				AlertBox.display("Success!", "Your tweet has been posted.");
 				tweetContent.setText("");
 			}
-			else AlertBox.display("Notice", "Your Tweet is too short.");
+			else AlertBox.display("Notice", "Your Tweet is too long or short.");
 		});
 		
 		

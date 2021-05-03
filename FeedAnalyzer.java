@@ -33,11 +33,6 @@ public class FeedAnalyzer {
 			
 			if (tempTagCount > tagCount.get(topTrending)) topTrending = tempTag;
 			
-//			if (tempTagCount > 1) {
-//				if (topTrending == null) topTrending = tempTag;
-//				else if (tagCount.get(topTrending) < tempTagCount) topTrending = tempTag;
-//				else continue;
-//			}
 			
 		}
 		

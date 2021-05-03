@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 
 public class FeedScene {
 	
+
 	public static Scene getFeedScene(Main main, User user, FeedFilters filter) {
 		
 		ScrollPane scroll = new ScrollPane();
@@ -20,6 +21,8 @@ public class FeedScene {
 		
 		layout.getChildren().add(MainMenuBar.getMainMenuBarWithFilters(main, user));
 		
+		Scene feedScene = new Scene(scroll, 500, 500);
+
 		
 		Tweet[] tweets = user.getTwitterFeed();
 		
@@ -33,7 +36,7 @@ public class FeedScene {
 
 		for (Tweet tweet : tweets) {
 			
-			TweetView tweetView = new TweetView(tweet, user);
+			TweetView tweetView = new TweetView(tweet, user, main, true);
 			Line line = new Line();
 			line.setStroke(Color.BLACK);
 			
@@ -58,14 +61,16 @@ public class FeedScene {
 		scroll.setContent(layout);
 		scroll.setFitToWidth(true);
 		scroll.setFitToHeight(true);
-		
-		Scene feedScene = new Scene(scroll, 500, 500);
-		
-		
+				
 		
 		
 		return feedScene;
 		
 	}
 
+
+
 }
+
+
+

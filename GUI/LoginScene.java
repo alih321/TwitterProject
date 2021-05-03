@@ -22,6 +22,9 @@ public class LoginScene {
 		title.setFont(Font.font("Economica", 25));
 		TextField username = new TextField("Username");
 		TextField password = new TextField("Password");
+		username.setMaxWidth(250);
+		password.setMaxWidth(250);
+		
 		Button login = new Button("Login / Register");
 		
 		login.setOnAction(e -> {

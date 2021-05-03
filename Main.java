@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 public class Main extends Application {
 	
 	private Stage primStage;
+	private Scene currentScene;
 	
 	
 	@Override
@@ -30,7 +31,7 @@ public class Main extends Application {
 		
 		DirectoryManager.initMainDirectory();
 
-		launch(args);
+		Application.launch(args);
 		
 	}
 	
@@ -39,12 +40,5 @@ public class Main extends Application {
 		primStage.setScene(scene);
 	}
 	
-
-
-
-
-	
-	
-
 	
 }

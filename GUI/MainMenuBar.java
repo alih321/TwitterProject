@@ -57,7 +57,7 @@ public class MainMenuBar {
 		
 		Menu filters = new Menu("Filters");
 		
-		MenuItem oldNew = new MenuItem("Old-New"), newOld = new MenuItem("New-Old"), trending = new MenuItem("Trending"), last10 = new MenuItem("Last 10 Tweets");
+		MenuItem  newOld = new MenuItem("New-Old"), trending = new MenuItem("Trending");
 		
 		trending.setOnAction(e -> {
 			main.setScene(FeedScene.getFeedScene(main, user, FeedFilters.TRENDING_ONLY));
@@ -67,7 +67,7 @@ public class MainMenuBar {
 			main.setScene(FeedScene.getFeedScene(main, user, FeedFilters.NONE));
 		});
 		
-		filters.getItems().addAll(oldNew,newOld,trending,last10);
+		filters.getItems().addAll(newOld,trending);
 		
 		bar.getMenus().add(filters);
 		
